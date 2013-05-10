@@ -46,6 +46,7 @@
             name="Options">
       </page>
    </extension>
+   <!--
    <extension
          id="builder"
          name="JSHint Problem Checker"
@@ -74,5 +75,6 @@
             type="org.eclipse.core.resources.textmarker">
       </super>
    </extension>
+   -->
 
 </plugin>

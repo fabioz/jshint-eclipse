@@ -10,7 +10,6 @@
  ******************************************************************************/
 package com.eclipsesource.jshint.ui.internal.preferences.ui;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -19,75 +18,78 @@ import org.eclipse.swt.widgets.Control;
 import org.osgi.service.prefs.Preferences;
 
 import com.eclipsesource.jshint.ui.internal.Activator;
-import com.eclipsesource.jshint.ui.internal.builder.BuilderUtil;
-import com.eclipsesource.jshint.ui.internal.builder.JSHintBuilder;
 import com.eclipsesource.jshint.ui.internal.preferences.EnablementPreferences;
 import com.eclipsesource.jshint.ui.internal.preferences.ResourceSelector;
 
-
 public class ProjectPropertyPage extends AbstractPropertyPage {
 
-  private IncludesView includesView;
+	private IncludesView includesView;
 
-  @Override
-  public boolean performOk() {
-    try {
-      if( storePreferences() ) {
-        boolean enabled = new ResourceSelector( getResource().getProject() ).allowVisitProject();
-        setBuilderEnabled( enabled );
-        triggerRebuild();
-      }
-    } catch( CoreException exception ) {
-      String message = "Failed to store settings";
-      Activator.logError( message, exception );
-      return false;
-    }
-    return true;
-  }
+	@Override
+	public boolean performOk() {
+		try {
+			if (storePreferences()) {
+				boolean enabled = new ResourceSelector(getResource()
+						.getProject()).allowVisitProject();
+				// setBuilderEnabled(enabled);
+				// triggerRebuild();
+			}
+		} catch (CoreException exception) {
+			String message = "Failed to store settings";
+			Activator.logError(message, exception);
+			return false;
+		}
+		return true;
+	}
 
-  @Override
-  protected void performDefaults() {
-    super.performDefaults();
-    includesView.loadDefaults();
-  }
+	@Override
+	protected void performDefaults() {
+		super.performDefaults();
+		includesView.loadDefaults();
+	}
 
-  @Override
-  protected Control createContents( Composite parent ) {
-    Composite composite = LayoutUtil.createMainComposite( parent );
-    includesView = new IncludesView( composite, SWT.NONE, getResource().getProject() );
-    includesView.setLayoutData( new GridData( SWT.FILL, SWT.FILL, true, true ) );
-    loadPreferences();
-    return composite;
-  }
+	@Override
+	protected Control createContents(Composite parent) {
+		Composite composite = LayoutUtil.createMainComposite(parent);
+		includesView = new IncludesView(composite, SWT.NONE, getResource()
+				.getProject());
+		includesView
+				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		loadPreferences();
+		return composite;
+	}
 
-  private void loadPreferences() {
-    Preferences node = getPreferences();
-    EnablementPreferences enablePreferences = new EnablementPreferences( node );
-    includesView.loadPreferences( enablePreferences );
-  }
+	private void loadPreferences() {
+		Preferences node = getPreferences();
+		EnablementPreferences enablePreferences = new EnablementPreferences(
+				node);
+		includesView.loadPreferences(enablePreferences);
+	}
 
-  private boolean storePreferences() throws CoreException {
-    Preferences node = getPreferences();
-    EnablementPreferences enablePreferences = new EnablementPreferences( node );
-    includesView.storePreferences( enablePreferences );
-    if( enablePreferences.hasChanged() ) {
-      savePreferences();
-      return true;
-    }
-    return false;
-  }
+	private boolean storePreferences() throws CoreException {
+		Preferences node = getPreferences();
+		EnablementPreferences enablePreferences = new EnablementPreferences(
+				node);
+		includesView.storePreferences(enablePreferences);
+		if (enablePreferences.hasChanged()) {
+			savePreferences();
+			return true;
+		}
+		return false;
+	}
 
-  private boolean setBuilderEnabled( boolean enabled ) throws CoreException {
-    IProject project = getResource().getProject();
-    if( enabled ) {
-      return BuilderUtil.addBuilderToProject( project, JSHintBuilder.ID );
-    }
-    return BuilderUtil.removeBuilderFromProject( project, JSHintBuilder.ID );
-  }
+	// private boolean setBuilderEnabled(boolean enabled) throws CoreException {
+	// IProject project = getResource().getProject();
+	// if( enabled ) {
+	// return BuilderUtil.addBuilderToProject( project, JSHintBuilder.ID );
+	// }
+	// return BuilderUtil.removeBuilderFromProject( project,
+	// JSHintBuilder.ID );
+	// }
 
-  private void triggerRebuild() throws CoreException {
-    IProject project = getResource().getProject();
-    BuilderUtil.triggerClean( project, JSHintBuilder.ID );
-  }
+	// private void triggerRebuild() throws CoreException {
+	// IProject project = getResource().getProject();
+	// BuilderUtil.triggerClean( project, JSHintBuilder.ID );
+	// }
 
 }
